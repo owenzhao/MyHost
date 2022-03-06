@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Reachability",
+        "repositoryURL": "git@github.com:master-nevi/Reachability.git",
+        "state": {
+          "branch": "master",
+          "revision": "a481cf8c72831ce582fcc800ba5121ea9f981043",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
