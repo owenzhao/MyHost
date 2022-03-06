@@ -5,7 +5,7 @@
         "package": "Reachability",
         "repositoryURL": "git@github.com:owenzhao/Reachability.git",
         "state": {
-          "branch": "3.6",
+          "branch": "3.3",
           "revision": "a481cf8c72831ce582fcc800ba5121ea9f981043",
           "version": null
         }
