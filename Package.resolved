@@ -2,11 +2,20 @@
   "object": {
     "pins": [
       {
+        "package": "QRCodeKit",
+        "repositoryURL": "git@github.com:owenzhao/QRCodeKit.git",
+        "state": {
+          "branch": null,
+          "revision": "db92920d4b31aac79c4a4589ddd358006447b8ce",
+          "version": "1.0.2"
+        }
+      },
+      {
         "package": "Reachability",
         "repositoryURL": "git@github.com:owenzhao/Reachability.git",
         "state": {
-          "branch": "3.3",
-          "revision": "a481cf8c72831ce582fcc800ba5121ea9f981043",
+          "branch": "3.4",
+          "revision": "9f80119b66b958b6e0e662ec7bb2a2ec0f16e745",
           "version": null
         }
       }
