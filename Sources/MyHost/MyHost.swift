@@ -106,9 +106,11 @@ extension MyHost {
             
             set(networkLinkDictionary: networkLinkDictionary)
             
+            #if DEBUG
             networkLinkDictionary.keys.sorted().forEach { key in
                 print(key, "\t", networkLinkDictionary[key]!)
             }
+            #endif
         }
     }
     
@@ -184,8 +186,10 @@ extension MyHost {
         switch type {
         case .ipv4:
             url = URL(string: "https://api.ipify.org?format=json")!
+            internetIPV4 = "..."
         case .ipv6:
             url = URL(string: "https://api64.ipify.org?format=json")!
+            internetIPV6 = "..."
         }
         let urlSessionConfiguration = URLSessionConfiguration.default
         let urlSession = URLSession(configuration: urlSessionConfiguration)
