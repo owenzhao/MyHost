@@ -215,7 +215,7 @@ extension MyHost {
 }
 
 public struct NetworkLink:Equatable {
-    public init(MAC:String, ipv6:String?, ipv4:String?){
+    public init(MAC:String, ipv6:String? = nil, ipv4:String? = nil){
         self.MAC = MAC
         self.ipv6 = ipv6
         self.ipv4 = ipv4
