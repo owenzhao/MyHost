@@ -4,10 +4,11 @@ import Cocoa
 import UIKit
 #endif
 
-import Reachability
+//import Reachability
+import Network
 
 public class MyHost {
-    var reach: Reachability?
+    let monitor = NWPathMonitor()
     var reachable = true
     
     private var enthernet = NetworkLink(MAC: "") {
@@ -46,23 +47,19 @@ public class MyHost {
     }
 
     public init() {
-        reach = Reachability.forInternetConnection()
-        
-        reach!.reachableBlock = { [self] _ in
+        monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
-                print("REACHABLE!")
-                reachable = true
+                if path.status == .satisfied {
+                    print("REACHABLE!")
+                    self.reachable = true
+                } else {
+                    self.reachable = false
+                    print("UNREACHABLE!")
+                }
             }
         }
         
-        reach!.unreachableBlock = { [self] _ in
-            DispatchQueue.main.async {
-                reachable = false
-                print("UNREACHABLE!")
-            }
-        }
-        
-        reach!.startNotifier()
+        monitor.start(queue: .global(qos: .background))
         
         getLocalIPAndMACAdress()
         
