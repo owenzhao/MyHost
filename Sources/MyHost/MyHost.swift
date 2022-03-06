@@ -50,11 +50,15 @@ public class MyHost {
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 if path.status == .satisfied {
+                    #if DEBUG
                     debugPrint("REACHABLE!")
+                    #endif
                     self.reachable = true
                 } else {
                     self.reachable = false
+                    #if DEBUG
                     debugPrint("UNREACHABLE!")
+                    #endif
                 }
             }
         }
@@ -120,10 +124,14 @@ extension MyHost {
                 // for iMac 5K, en0 is ethernet; en1 is WiFi
             case "en0":
                 enthernet = getNetworkLink(values: networkLinkDictionary["en0"] ?? [])
+                #if DEBUG
                 debugPrint(enthernet)
+                #endif
             case "en1":
                 wifi = getNetworkLink(values: networkLinkDictionary["en1"] ?? [])
+                #if DEBUG
                 debugPrint(wifi)
+                #endif
             default:
                 break
             }
@@ -202,18 +210,24 @@ extension MyHost {
                         switch type {
                         case .ipv4:
                             internetIPV4 = dic["ip"]!
+                            #if DEBUG
                             debugPrint(internetIPV4)
+                            #endif
                         case .ipv6:
                             internetIPV6 = dic["ip"]!
+                            #if DEBUG
                             debugPrint(internetIPV6)
+                            #endif
                         }
                     }
                 } else {
+                    #if DEBUG
                     debugPrint(urlResponse)
+                    #endif
                 }
             }
         } catch {
-            debugPrint(error)
+            print(error)
         }
     }
 }
