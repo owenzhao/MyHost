@@ -10,6 +10,7 @@ import Network
 public class MyHost {
     let monitor = NWPathMonitor()
     var reachable = true
+    lazy private var networkLinkDictionary = [String:[String]]()
     
     private var enthernet = NetworkLink(MAC: "") {
         didSet {
@@ -88,7 +89,10 @@ extension MyHost {
         if getifaddrs(&ifaddr) == 0 {
             // For each interface ...
             var ptr:UnsafeMutablePointer<ifaddrs>! = ifaddr
-            var networkLinkDictionary = [String:[String]]()
+            
+            defer {
+                networkLinkDictionary.removeAll(keepingCapacity: true)
+            }
             
             repeat {
                 defer { ptr = ptr.pointee.ifa_next}
