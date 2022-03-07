@@ -90,9 +90,9 @@ extension MyHost {
             // For each interface ...
             var ptr:UnsafeMutablePointer<ifaddrs>! = ifaddr
             
-            defer {
-                networkLinkDictionary.removeAll(keepingCapacity: true)
-            }
+//            defer {
+//                networkLinkDictionary.removeAll(keepingCapacity: true)
+//            }
             
             repeat {
                 defer { ptr = ptr.pointee.ifa_next}
@@ -119,6 +119,8 @@ extension MyHost {
                 print(key, "\t", networkLinkDictionary[key]!)
             }
             #endif
+            
+            networkLinkDictionary.removeAll(keepingCapacity: true)
         }
     }
     
