@@ -10,7 +10,6 @@ import Network
 public class MyHost {
     let monitor = NWPathMonitor()
     var reachable = true
-    lazy private var networkLinkDictionary = [String:[String]]()
     
     private var enthernet = NetworkLink(MAC: "") {
         didSet {
@@ -47,7 +46,7 @@ public class MyHost {
         }
     }
 
-    public init() {
+    public init() async {
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 if path.status == .satisfied {
@@ -68,10 +67,9 @@ public class MyHost {
         
         getLocalIPAndMACAdress()
         
-        Task {
-            await getInternetIP()
-            await observeIPChange()
-        }
+
+        await getInternetIP()
+        await observeIPChange()
     }
 }
 
@@ -89,10 +87,7 @@ extension MyHost {
         if getifaddrs(&ifaddr) == 0 {
             // For each interface ...
             var ptr:UnsafeMutablePointer<ifaddrs>! = ifaddr
-            
-//            defer {
-//                networkLinkDictionary.removeAll(keepingCapacity: true)
-//            }
+            var networkLinkDictionary = [String:[String]]()
             
             repeat {
                 defer { ptr = ptr.pointee.ifa_next}
@@ -115,12 +110,10 @@ extension MyHost {
             set(networkLinkDictionary: networkLinkDictionary)
             
             #if DEBUG
-            for key in networkLinkDictionary.keys.sorted() {
+            networkLinkDictionary.keys.sorted().forEach { key in
                 print(key, "\t", networkLinkDictionary[key]!)
             }
             #endif
-            
-            networkLinkDictionary.removeAll(keepingCapacity: true)
         }
     }
     
@@ -168,19 +161,12 @@ extension MyHost {
     }
     
     private func getInternetIP() async {
-        defer {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-                Task {
-                    await observeIPChange()
-                }
-            }
+        for type in IPType.allCases {
+            await setInterIP(type: type)
         }
         
-        IPType.allCases.forEach { type in
-            Task {
-                await setInterIP(type:type)
-            }
-        }
+        try! await Task.sleep(nanoseconds: 1000_000_000 * 5)
+        await observeIPChange()
     }
     
     private func setInterIP(type:IPType) async {
