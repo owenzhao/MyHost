@@ -14,7 +14,9 @@ public class MyHost {
     private var enthernet = NetworkLink(MAC: "") {
         didSet {
             if enthernet != oldValue {
-                NotificationCenter.default.post(name: MyHost.EnthernetUpdate, object: enthernet)
+                DispatchQueue.main.async { [self] in
+                    NotificationCenter.default.post(name: MyHost.EnthernetUpdate, object: enthernet)
+                }
             }
         }
     }
