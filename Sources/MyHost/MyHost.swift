@@ -115,7 +115,7 @@ extension MyHost {
             set(networkLinkDictionary: networkLinkDictionary)
             
             #if DEBUG
-            networkLinkDictionary.keys.sorted().forEach { key in
+            for key in networkLinkDictionary.keys.sorted() {
                 print(key, "\t", networkLinkDictionary[key]!)
             }
             #endif
