@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Defaults",
+        "repositoryURL": "git@github.com:sindresorhus/Defaults.git",
+        "state": {
+          "branch": null,
+          "revision": "c9198bb1d097486711a36269b191f4e96d93130b",
+          "version": "6.2.0"
+        }
+      },
+      {
+        "package": "SpeedTestServiceNotification",
+        "repositoryURL": "git@github.com:owenzhao/SpeedTestServiceNotification.git",
+        "state": {
+          "branch": null,
+          "revision": "843192b43e78bc820b666ab2d3384cc90569e632",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -6,10 +6,12 @@ import UIKit
 
 //import Reachability
 import Network
+import SpeedTestServiceNotification
 
 public class MyHost {
     let monitor = NWPathMonitor()
     var reachable = true
+    private var shouldStop = false
     
     private var enthernet = NetworkLink(MAC: "") {
         didSet {
@@ -49,6 +51,10 @@ public class MyHost {
     }
 
     public init() async {
+        NotificationCenter.default.addObserver(forName: SpeedTestServiceNotification.stop, object: nil, queue: nil) { [self] _ in
+            shouldStop = true
+        }
+        
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 if path.status == .satisfied {
@@ -168,7 +174,10 @@ extension MyHost {
         }
         
         try! await Task.sleep(nanoseconds: 1000_000_000 * 5)
-        await observeIPChange()
+        
+        if !shouldStop {
+            await observeIPChange()
+        }
     }
     
     private func setInterIP(type:IPType) async {
