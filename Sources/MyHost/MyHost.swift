@@ -77,7 +77,6 @@ public class MyHost {
         
 
         await getInternetIP()
-        await observeIPChange()
     }
 }
 
