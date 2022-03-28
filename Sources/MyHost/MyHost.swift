@@ -44,7 +44,7 @@ public class MyHost {
         didSet {
             if internetIPV6 != oldValue {
                 DispatchQueue.main.async { [self] in
-                    NotificationCenter.default.post(name: MyHost.InternetIPV4Update, object: internetIPV6)
+                    NotificationCenter.default.post(name: MyHost.InternetIPV6Update, object: internetIPV6)
                 }
             }
         }
@@ -85,6 +85,8 @@ extension MyHost {
     public static let WifiUpdate = Notification.Name("WifiUpdate")
     public static let InternetIPV4Update = Notification.Name("InternetIPV4Update")
     public static let InternetIPV6Update = Notification.Name("InternetIPV6Update")
+    
+    public static let inactivceString = NSLocalizedString("Inactive", bundle: .module, comment: "")
     
     private func getLocalIPAndMACAdress() {
         var address : String?
@@ -185,9 +187,9 @@ extension MyHost {
         if !reachable {
             switch type {
             case .ipv4:
-                internetIPV4 = NSLocalizedString("Inactive", bundle: .module, comment: "")
+                internetIPV4 = MyHost.inactivceString
             case .ipv6:
-                internetIPV6 = NSLocalizedString("Inactive", bundle: .module, comment: "")
+                internetIPV6 = MyHost.inactivceString
             }
             
             return
