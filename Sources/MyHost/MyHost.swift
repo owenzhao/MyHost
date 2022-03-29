@@ -31,7 +31,7 @@ public class MyHost {
             }
         }
     }
-    private var internetIPV4 = "" {
+    public var internetIPV4 = "" {
         didSet {
             if internetIPV4 != oldValue {
                 DispatchQueue.main.async { [self] in
@@ -40,7 +40,7 @@ public class MyHost {
             }
         }
     }
-    private var internetIPV6 = "" {
+    public var internetIPV6 = "" {
         didSet {
             if internetIPV6 != oldValue {
                 DispatchQueue.main.async { [self] in
