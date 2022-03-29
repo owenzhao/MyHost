@@ -259,7 +259,7 @@ public struct NetworkLink:Equatable {
     public var ipv4:String? = nil
 }
 
-enum IPType: CaseIterable {
+public enum IPType: CaseIterable {
     case ipv4
     case ipv6
 }
