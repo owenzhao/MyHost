@@ -50,7 +50,7 @@ public class MyHost {
         }
     }
     
-    public var shared:MyHost {
+    public static var shared:MyHost {
         return MyHost()
     }
 
