@@ -49,8 +49,12 @@ public class MyHost {
             }
         }
     }
+    
+    public var shared:MyHost {
+        return MyHost()
+    }
 
-    public init() async {
+    private init() {
         NotificationCenter.default.addObserver(forName: SpeedTestServiceNotification.stop, object: nil, queue: nil) { [self] _ in
             shouldStop = true
         }
@@ -75,8 +79,9 @@ public class MyHost {
         
         getLocalIPAndMACAdress()
         
-
-        await getInternetIP()
+        Task {
+            await getInternetIP()
+        }
     }
 }
 
