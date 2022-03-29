@@ -31,7 +31,7 @@ public class MyHost {
             }
         }
     }
-    public var internetIPV4 = "" {
+    private var internetIPV4 = "" {
         didSet {
             if internetIPV4 != oldValue {
                 DispatchQueue.main.async { [self] in
@@ -40,7 +40,7 @@ public class MyHost {
             }
         }
     }
-    public var internetIPV6 = "" {
+    private var internetIPV6 = "" {
         didSet {
             if internetIPV6 != oldValue {
                 DispatchQueue.main.async { [self] in
@@ -52,6 +52,10 @@ public class MyHost {
     
     public static var shared:MyHost {
         return MyHost()
+    }
+    
+    public static func start() {
+        _ = MyHost.shared
     }
 
     private init() {
