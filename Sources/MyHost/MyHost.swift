@@ -52,12 +52,12 @@ public class MyHost {
     
     public static var shared = MyHost()
 
-    public static func updateHostNotifications() {
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(name: MyHost.EnthernetUpdate, object: shared.enthernet)
-            NotificationCenter.default.post(name: MyHost.WifiUpdate, object: shared.wifi)
-            NotificationCenter.default.post(name: MyHost.InternetIPV4Update, object: shared.internetIPV4)
-            NotificationCenter.default.post(name: MyHost.InternetIPV6Update, object: shared.internetIPV6)
+    public func updateHostNotifications() {
+        DispatchQueue.main.async { [self] in
+            NotificationCenter.default.post(name: MyHost.EnthernetUpdate, object: enthernet)
+            NotificationCenter.default.post(name: MyHost.WifiUpdate, object: wifi)
+            NotificationCenter.default.post(name: MyHost.InternetIPV4Update, object: internetIPV4)
+            NotificationCenter.default.post(name: MyHost.InternetIPV6Update, object: internetIPV6)
         }
     }
     
