@@ -8,49 +8,56 @@ import UIKit
 import Network
 import SpeedTestServiceNotification
 
-public class MyHost {
+public class MyHost:ObservableObject {
     let monitor = NWPathMonitor()
-    var reachable = true
     private var shouldStop = false
     
-    private var enthernet = NetworkLink(MAC: "") {
+    @Published public var reachable = false {
         didSet {
-            if enthernet != oldValue {
-                DispatchQueue.main.async { [self] in
-                    NotificationCenter.default.post(name: MyHost.EnthernetUpdate, object: enthernet)
-                }
-            }
-        }
-    }
-    private var wifi = NetworkLink(MAC: "") {
-        didSet {
-            if wifi != oldValue {
-                DispatchQueue.main.async { [self] in
-                    NotificationCenter.default.post(name: MyHost.WifiUpdate, object: wifi)
-                }
-            }
-        }
-    }
-    private var internetIPV4 = "" {
-        didSet {
-            if internetIPV4 != oldValue {
-                DispatchQueue.main.async { [self] in
-                    NotificationCenter.default.post(name: MyHost.InternetIPV4Update, object: internetIPV4)
-                }
-            }
-        }
-    }
-    private var internetIPV6 = "" {
-        didSet {
-            if internetIPV6 != oldValue {
-                DispatchQueue.main.async { [self] in
-                    NotificationCenter.default.post(name: MyHost.InternetIPV6Update, object: internetIPV6)
+            if reachable != oldValue {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: MyHost.ReachableUpdate, object: self.reachable)
                 }
             }
         }
     }
     
-    public static var shared = MyHost()
+    @Published public var enthernet = NetworkLink(MAC: "") {
+        didSet {
+            if enthernet != oldValue {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: MyHost.EnthernetUpdate, object: self.enthernet)
+                }
+            }
+        }
+    }
+    @Published public var wifi = NetworkLink(MAC: "") {
+        didSet {
+            if wifi != oldValue {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: MyHost.WifiUpdate, object: self.wifi)
+                }
+            }
+        }
+    }
+    @Published public var internetIPV4 = "" {
+        didSet {
+            if internetIPV4 != oldValue {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: MyHost.InternetIPV4Update, object: self.internetIPV4)
+                }
+            }
+        }
+    }
+    @Published public var internetIPV6 = "" {
+        didSet {
+            if internetIPV6 != oldValue {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: MyHost.InternetIPV6Update, object: self.internetIPV6)
+                }
+            }
+        }
+    }
 
     public func updateHostNotifications() {
         DispatchQueue.main.async { [self] in
@@ -61,28 +68,26 @@ public class MyHost {
         }
     }
     
-    public static func start() {
-        _ = MyHost.shared
+    public func start() {
+        
     }
 
-    private init() {
-        NotificationCenter.default.addObserver(forName: SpeedTestServiceNotification.stop, object: nil, queue: nil) { [self] _ in
-            shouldStop = true
+    public init() {
+        NotificationCenter.default.addObserver(forName: SpeedTestServiceNotification.stop, object: nil, queue: nil) { _ in
+            self.shouldStop = true
         }
         
         monitor.pathUpdateHandler = { path in
-            DispatchQueue.main.async {
-                if path.status == .satisfied {
-                    #if DEBUG
-                    debugPrint("REACHABLE!")
-                    #endif
-                    self.reachable = true
-                } else {
-                    self.reachable = false
-                    #if DEBUG
-                    debugPrint("UNREACHABLE!")
-                    #endif
-                }
+            if path.status == .satisfied {
+                #if DEBUG
+                debugPrint("REACHABLE!")
+                #endif
+                self.reachable = true
+            } else {
+                self.reachable = false
+                #if DEBUG
+                debugPrint("UNREACHABLE!")
+                #endif
             }
         }
         
@@ -97,6 +102,7 @@ public class MyHost {
 }
 
 extension MyHost {
+    public static let ReachableUpdate = Notification.Name("ReachableUpdate")
     public static let EnthernetUpdate = Notification.Name("EnthernetUpdate")
     public static let WifiUpdate = Notification.Name("WifiUpdate")
     public static let InternetIPV4Update = Notification.Name("InternetIPV4Update")
@@ -147,12 +153,16 @@ extension MyHost {
             switch $0 {
                 // for iMac 5K, en0 is ethernet; en1 is WiFi
             case "en0":
-                enthernet = getNetworkLink(values: networkLinkDictionary["en0"] ?? [])
+                DispatchQueue.main.async { [self] in
+                    enthernet = getNetworkLink(values: networkLinkDictionary["en0"] ?? [])
+                }
                 #if DEBUG
                 debugPrint(enthernet)
                 #endif
             case "en1":
-                wifi = getNetworkLink(values: networkLinkDictionary["en1"] ?? [])
+                DispatchQueue.main.async { [self] in
+                    wifi = getNetworkLink(values: networkLinkDictionary["en1"] ?? [])
+                }
                 #if DEBUG
                 debugPrint(wifi)
                 #endif
@@ -216,13 +226,17 @@ extension MyHost {
             url = URL(string: "https://api.ipify.org?format=json")!
             
             if internetIPV4.isEmpty {
-                internetIPV4 = "..."
+                DispatchQueue.main.async {
+                    self.internetIPV4 = "..."
+                }
             }
         case .ipv6:
             url = URL(string: "https://api64.ipify.org?format=json")!
             
             if internetIPV6.isEmpty {
-                internetIPV6 = "..."
+                DispatchQueue.main.async {
+                    self.internetIPV6 = "..."
+                }
             }
         }
         let urlSessionConfiguration = URLSessionConfiguration.default
@@ -230,27 +244,29 @@ extension MyHost {
         
         do {
             let (data, urlResponse) = try await urlSession.data(from: url)
-            DispatchQueue.main.async { [self] in
-                if let httpResponse = urlResponse as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                    if let dic = try? JSONSerialization.jsonObject(with: data, options: []) as? [String:String] {
-                        switch type {
-                        case .ipv4:
-                            internetIPV4 = dic["ip"]!
-                            #if DEBUG
-                            debugPrint(internetIPV4)
-                            #endif
-                        case .ipv6:
-                            internetIPV6 = dic["ip"]!
-                            #if DEBUG
-                            debugPrint(internetIPV6)
-                            #endif
+            if let httpResponse = urlResponse as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                if let dic = try? JSONSerialization.jsonObject(with: data, options: []) as? [String:String] {
+                    switch type {
+                    case .ipv4:
+                        DispatchQueue.main.async {
+                            self.internetIPV4 = dic["ip"]!
                         }
+                        #if DEBUG
+                        debugPrint(internetIPV4)
+                        #endif
+                    case .ipv6:
+                        DispatchQueue.main.async {
+                            self.internetIPV6 = dic["ip"]!
+                        }
+                        #if DEBUG
+                        debugPrint(internetIPV6)
+                        #endif
                     }
-                } else {
-                    #if DEBUG
-                    debugPrint(urlResponse)
-                    #endif
                 }
+            } else {
+                #if DEBUG
+                debugPrint(urlResponse)
+                #endif
             }
         } catch {
             print(error)
