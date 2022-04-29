@@ -12,7 +12,7 @@ public class MyHost:ObservableObject {
     let monitor = NWPathMonitor()
     private var shouldStop = false
     
-    @Published public var reachable = false {
+    private var reachable = false {
         didSet {
             if reachable != oldValue {
                 DispatchQueue.main.async {
@@ -77,14 +77,14 @@ public class MyHost:ObservableObject {
             self.shouldStop = true
         }
         
-        monitor.pathUpdateHandler = { path in
+        monitor.pathUpdateHandler = { [self] path in
             if path.status == .satisfied {
                 #if DEBUG
                 debugPrint("REACHABLE!")
                 #endif
-                self.reachable = true
+                reachable = true
             } else {
-                self.reachable = false
+                reachable = false
                 #if DEBUG
                 debugPrint("UNREACHABLE!")
                 #endif
@@ -207,7 +207,7 @@ extension MyHost {
         }
     }
     
-    private func setInterIP(type:IPType) async {
+    private func setInterIP(type:IPType) async { 
         let url:URL
         
         if !reachable {
