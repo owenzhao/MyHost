@@ -10,9 +10,19 @@ import SpeedTestServiceNotification
 
 public class MyHost:ObservableObject {
     let monitor = NWPathMonitor()
-    private var shouldStop = false
+    private var shouldStop = false {
+        didSet {
+            if shouldStop {
+                state = "stopped"
+            } else {
+                state = "running"
+            }
+        }
+    }
     
-    private var reachable = false {
+    @Published public var state:String = "not running"
+    
+    @Published public var reachable = false {
         didSet {
             if reachable != oldValue {
                 DispatchQueue.main.async {
@@ -68,11 +78,24 @@ public class MyHost:ObservableObject {
         }
     }
     
-    public func start() {
+    public func start() async {
+        state = "running"
         
+        if shouldStop {
+            shouldStop = false
+        }
+        
+        getLocalIPAndMACAdress()
+        await getInternetIP()
     }
+    
+    public func stop() {
+        shouldStop = true
+    }
+    
+    static public var shared = MyHost()
 
-    public init() {
+    private init() {
         NotificationCenter.default.addObserver(forName: SpeedTestServiceNotification.stop, object: nil, queue: nil) { _ in
             self.shouldStop = true
         }
@@ -92,12 +115,6 @@ public class MyHost:ObservableObject {
         }
         
         monitor.start(queue: .global(qos: .background))
-        
-        getLocalIPAndMACAdress()
-        
-        Task {
-            await getInternetIP()
-        }
     }
 }
 
