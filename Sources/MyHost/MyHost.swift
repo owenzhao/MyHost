@@ -105,9 +105,13 @@ public class MyHost:ObservableObject {
                 #if DEBUG
                 debugPrint("REACHABLE!")
                 #endif
-                reachable = true
+                DispatchQueue.main.async {
+                    self.reachable = true
+                }
             } else {
-                reachable = false
+                DispatchQueue.main.async {
+                    self.reachable = false
+                }
                 #if DEBUG
                 debugPrint("UNREACHABLE!")
                 #endif
