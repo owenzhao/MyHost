@@ -10,7 +10,7 @@ import SpeedTestServiceNotification
 
 public class MyHost:ObservableObject {
     let monitor = NWPathMonitor()
-    private var shouldStop = false {
+    public private(set) var shouldStop = false {
         didSet {
             if shouldStop {
                 state = "stopped"
