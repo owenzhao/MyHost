@@ -79,7 +79,9 @@ public class MyHost:ObservableObject {
     }
     
     public func start() async {
-        state = "running"
+        DispatchQueue.main.async {
+            self.state = "running"
+        }
         
         if shouldStop {
             shouldStop = false
