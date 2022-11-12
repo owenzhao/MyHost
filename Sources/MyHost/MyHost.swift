@@ -81,10 +81,10 @@ public class MyHost:ObservableObject {
     public func start() async {
         DispatchQueue.main.async {
             self.state = "running"
-        }
-        
-        if shouldStop {
-            shouldStop = false
+            
+            if self.shouldStop {
+                self.shouldStop = false
+            }
         }
         
         getLocalIPAndMACAdress()
@@ -92,7 +92,9 @@ public class MyHost:ObservableObject {
     }
     
     public func stop() {
-        shouldStop = true
+        DispatchQueue.main.async {
+            self.shouldStop = true
+        }
     }
     
     static public var shared = MyHost()
